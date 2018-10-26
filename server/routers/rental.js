@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Rental = require('./../models/rental');
+const User = require('./../models/user');
 
 const UserCtrl = require('../controllers/user');
 const { normalizeErrors } = require('../helpers/mongoose');
@@ -20,6 +21,26 @@ router.get( '/:id', function(req, res){
             if(err) return res.status(400).send( {err: { title :'Rentail Error', detail:'could not find Retail' } } );
             return res.json( rentalResult );
           })
+
+})
+//Tạo mới rental
+router.post( '', UserCtrl.authMiddleware , function(req , res ){
+  const { title, city, street, category, image, shared, bedrooms, description, dailyRate } = req.body;
+  const user = res.locals.user;
+  
+  const rental = new Rental( {title, city, street, category, image, shared, bedrooms, description, dailyRate} );
+  rental.user = user;
+
+  //Tạo database
+  Rental.create( rental , function(err, newRental){
+    if (err) return res.status(422).send({errors: normalizeErrors(err.errors)});
+
+    //Cập nhập rental vào Schema User
+    User.update( { _id : user.id }, { $push : { rentals : newRental } }, () =>{} );
+
+    return res.json({newRental});
+
+  })
 
 })
 

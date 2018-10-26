@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import RentalCart from './RentalCart';
 
 import { connect } from 'react-redux';
-import * as action from './../../../actions';
+import * as actions from './../../../actions';
 
 import CircularProgress from '@material-ui/core/CircularProgress';
 
@@ -11,8 +11,12 @@ class RentalList extends Component {
         loadding : true
     }
 
+    componentWillMount(){
+        this.props.dispatch( actions.clearRentalsDetail());
+    }
+
     componentDidMount(){
-        this.props.dispatch(action.fetchRentals());
+        this.props.dispatch(actions.fetchRentals());
     }
     
     renderRentals = () =>(
@@ -26,11 +30,12 @@ class RentalList extends Component {
     )
 
     render() {
+        const { title } = this.props;
         return (
             <div>
                 <div className='container'>
                     <section id='rentalListing'>
-                        <h1 className='page-title'>Your Home All Around the World</h1>
+                        <h1 className='page-title'> { title ? title : 'Your Home All Around the World' } </h1>
                         <div className='row'>
                             { this.renderRentals() }
                             

@@ -12,12 +12,17 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 class RentalDetail extends Component {
 
     componentDidMount(){
-        const id = this.props.match.params.id
-        this.props.dispatch( action.fetchRentalById( id ) )
+        const id = this.props.match.params.id;
+        this.props.dispatch( action.fetchRentalById( id )); 
     }
 
-    render() {  
+    componentWillMount(){
+        this.props.dispatch( action.clearRentalDetail());
+    }
+
+    render() {
         let rental = this.props.rental.data;
+
         if(rental._id){
             return (
                 <section id='rentalDetails'>
@@ -27,8 +32,7 @@ class RentalDetail extends Component {
                             <img src={rental.image} alt=''></img>
                         </div>
                         <div className='col-md-6'>
-                            <RentalMap location = { `${rental.city} , ${rental.street}` }
-                            />
+                            <RentalMap location={`${rental.city}, ${rental.street}`} />
                         </div>
                         </div>
                     </div>

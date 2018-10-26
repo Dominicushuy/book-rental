@@ -5,11 +5,17 @@ export const BwmInput = ({
     label,
     type,
     className,
+    symbol,
     meta: { touched, error }
   }) => (
     <div className="form-group">
         <label>{label}</label>
         <div className="input-group" >
+        { symbol &&
+            <div className='input-group-prepend'>
+                <div className='input-group-text'>{symbol}</div>
+            </div>
+        }
             <input {...input} placeholder={label} type={type} className={className} />
         </div>  
         {touched &&

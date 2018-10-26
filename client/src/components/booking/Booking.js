@@ -17,9 +17,10 @@ class Booking extends Component {
     constructor() {
         super();
         this.bookedOutDates = [];
-        this.dateRef = React.createRef();
+        // this.dateRef = React.createRef();
 
         this.state = {
+            dayPicker:"",
             proposedBooking: {
                 startAt: '',
                 endAt: '',
@@ -55,9 +56,8 @@ class Booking extends Component {
         const startAt = picker.startDate.format('Y/MM/DD');
         const endAt = picker.endDate.format('Y/MM/DD');
 
-        this.dateRef.current.value = startAt + ' to ' + endAt;
-
         this.setState({
+            dayPicker:startAt + ' to ' + endAt,
             proposedBooking : {
                 ...this.state.proposedBooking,
                 startAt, endAt
@@ -130,10 +130,16 @@ class Booking extends Component {
     }
 
     resetData = () =>{
-        this.dateRef.current.value = '';
         
         this.setState({
+            dayPicker:"",
             proposedBooking : { guests : '' }
+        })
+    }
+
+    onChange = (event) =>{
+        this.setState({
+            dayPicker : [event.target.value]
         })
     }
 
@@ -159,7 +165,15 @@ class Booking extends Component {
                                         isInvalidDate={this.checkInvalidDates}
                                         opens='left'
                                         containerStyles={{display: 'block'}}>
-                        <input ref={this.dateRef} id='dates' type='text' className='form-control'></input>
+                        <input
+                            onChange={ this.onChange }  
+                            name="dayPicker"
+                            value={this.state.dayPicker}
+                            id='dates' 
+                            type='text' 
+                            className='form-control'
+                        >
+                        </input>
                         </DateRangePicker>
                         </div>
                         <div className='form-group'>

@@ -15,10 +15,10 @@ function mapComponent(props){
 
   return (
     <GoogleMap
-    defaultZoom={13}
-    defaultCenter={ coordinates }
-    center={ coordinates }
-    options={{disableDefaultUI: isError ? true : false}}
+      defaultZoom={13}
+      defaultCenter={ coordinates }
+      center={ coordinates }
+      options={{disableDefaultUI: isError ? true : false}}
   >
     {!isError && <Circle center={coordinates} radius={300} />}
     { isLocationLoaded && isError && 
