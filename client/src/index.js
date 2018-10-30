@@ -7,6 +7,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.min.js';
 import 'bootstrap-daterangepicker/daterangepicker.css';
 import 'react-toastify/dist/ReactToastify.min.css';
+import 'react-image-crop/dist/ReactCrop.css';
 
 import { BrowserRouter } from 'react-router-dom';
 

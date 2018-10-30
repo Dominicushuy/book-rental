@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import DateRangePicker from 'react-bootstrap-daterangepicker';
 import * as moment from 'moment';
 
-import { ToastContainer , toast } from 'react-toastify';
-// import swal from 'sweetalert2';
+// import { ToastContainer , toast } from 'react-toastify';
+import swal from 'sweetalert2';
 
 import { getRangeOfDates } from './../../helpers';
 import BookingModal from './BookingModal';
@@ -107,15 +107,15 @@ class Booking extends Component {
                 this.resetData();
                 this.cancelConfirmation();
 
-                toast.success('Booking has been succesfuly created! Enjoy.');
+                // toast.success('Booking has been succesfuly created! Enjoy.');
 
-                // swal({
-                //     position: 'center',
-                //     type: 'success',
-                //     title: 'Booking has been succesfuly created! Enjoy.',
-                //     showConfirmButton: false,
-                //     timer: 1500
-                // })
+                swal({
+                    position: 'center',
+                    type: 'success',
+                    title: 'Booking has been succesfuly created! Enjoy.',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
 
             },
             (errors) =>{
@@ -144,12 +144,13 @@ class Booking extends Component {
     }
 
     render() {
-        const { rental, auth: { isAuth } } = this.props;
+        const { rental } = this.props;
         const { startAt, endAt, guests } = this.state.proposedBooking;
+        const isAuth = localStorage.getItem('auth_token');
 
         return (
             <div className='booking'>
-                <ToastContainer />
+                {/* <ToastContainer /> */}
                 <h3 className='booking-price'>$ {rental.dailyRate} <span className='booking-per-night'>per night</span></h3>
                 <hr></hr>
                 { !isAuth &&

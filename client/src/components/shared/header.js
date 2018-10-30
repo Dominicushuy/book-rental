@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom' ;
+import * as jwt from 'jsonwebtoken';
 
 import { connect } from 'react-redux';
 import * as actions from './../../actions';
@@ -17,8 +18,42 @@ class Header extends Component {
             )
     }
 
+    renderAuthButtons = (isAuth, username) =>(
+        !isAuth ?
+            <React.Fragment>
+                <Link className='nav-item nav-link' to='/login'>Login <span className='sr-only'>(current)</span></Link>
+                <Link className='nav-item nav-link' to='/register'>Register</Link>
+            </React.Fragment>
+        :   (
+                <React.Fragment>
+                    <div className='nav-item nav-link' > { username } </div> 
+                    <Link className='nav-item nav-link' style={{display:"inline"}} to='/rentals' onClick={ () => this.props.dispatch( actions.logout()) } >Logout</Link>
+                </React.Fragment>
+            )
+
+    )
+
+    renderOwnerSection(isAuth) {
+        if (isAuth) {
+          return (
+            <div className="nav-item dropdown">
+              <a href='# ' className="nav-link nav-item dropdown-toggle clickable" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" >
+                Owner Section
+              </a>
+              <div className="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                <Link className="dropdown-item" to="/rentals/new">Create Rental</Link>
+                <Link className="dropdown-item" to="/rentals/manage">Manage Rentals</Link>
+                <Link className="dropdown-item" to="/bookings/manage">Manage Bookings</Link>
+              </div>
+            </div>
+          )
+        }
+      }
+
     render() {
-        const { auth } = this.props;
+        const isAuth = localStorage.getItem('auth_token');
+        const username = isAuth ? jwt.decode(isAuth).username : null;
+
         return (
             <nav className='navbar navbar-dark navbar-expand-lg'>
                 <div className='container'>
@@ -29,15 +64,8 @@ class Header extends Component {
                     </button>
                     <div className='collapse navbar-collapse' id='navbarNavAltMarkup'>
                         <div className='navbar-nav ml-auto'>
-                        {   !auth.isAuth &&
-                                <React.Fragment>
-                                    <Link className='nav-item nav-link' to='/login'>Login <span className='sr-only'>(current)</span></Link>
-                                    <Link className='nav-item nav-link' to='/register'>Register</Link>
-                                </React.Fragment>          
-                        }
-
-                        { this.Logout() }
-                        
+                            {this.renderAuthButtons(isAuth, username)}
+                            {this.renderOwnerSection(isAuth)}
                         </div>
                     </div>
                 </div>

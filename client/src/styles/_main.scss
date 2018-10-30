@@ -3,8 +3,11 @@
 @import 'form/form.scss';
 
 @import 'booking/booking.scss';
+@import 'booking/user_booking';
 @import 'rental/rental_listing.scss';
 @import 'rental/rental_detail.scss';
+@import 'rental/rental_manage';
+@import 'editable/editable-component';
 
 
 .clickable {

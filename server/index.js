@@ -1,5 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+require('dotenv').config();
 
 //<============================================================================>
 //                                    EXPRESS
@@ -22,7 +23,7 @@ const config = require('./config/dev');
 
 const FakeDB = require('./fake_db');
 
-mongoose.connect(config.DB_URL, { useNewUrlParser: true } ).then( () =>{
+mongoose.connect(config.DB_URL, { useCreateIndex: true , useNewUrlParser: true } ).then( () =>{
     const fakeDB = new FakeDB();
     // fakeDB.seeDB();
 })
@@ -33,10 +34,12 @@ mongoose.connect(config.DB_URL, { useNewUrlParser: true } ).then( () =>{
 const rentalRoutes = require('./routers/rental');
 const userRoutes = require('./routers/users');
 const bookingRoutes = require('./routers/bookings');
+const imageUploadRoutes = require('./routers/image-upload');
 
 app.use('/api/v1/rentals', rentalRoutes);
 app.use('/api/v1/users', userRoutes);
 app.use('/api/v1/bookings', bookingRoutes);
+app.use('/api/v1/', imageUploadRoutes);
 
 const PORT = process.env.PORT || 3001;
 

@@ -154,3 +154,75 @@ export const createBooking = (booking) =>{
                         .then( res => res.data )
                         .catch( ({response}) => Promise.reject(response.data.errors) )
 }
+
+//<==========================================================================>
+//                                BOOKING MANAGE
+//<==========================================================================>
+
+const fetchUserBookingsInit = () => {
+    return {
+      type: type.FETCH_USER_BOOKINGS_INIT
+    }
+  }
+  
+const fetchUserBookingsSuccess = (userBookings) => {
+    return {
+      type: type.FETCH_USER_BOOKINGS_SUCCESS,
+      userBookings
+    }
+  }
+  
+const fetchUserBookingsFail = (errors) => {
+    return {
+      type: type.FETCH_USER_BOOKINGS_FAIL,
+      errors
+    }
+  }
+
+export const fetchUserBookings = () =>{
+    
+    return dispatch =>{
+        dispatch(fetchUserBookingsInit);
+
+        axiosInstance.get('/bookings/manage')
+                     .then( res => res.data )
+                     .then( userBookings => dispatch(fetchUserBookingsSuccess(userBookings)) )
+                     .catch( errors => dispatch(fetchUserBookingsFail(errors)) )
+    }
+
+}
+
+//<==========================================================================>
+//                                USER MANAGE
+//<==========================================================================>
+
+export const getUserRentals = () =>{
+    return axiosInstance.get('rentals/manage').then(
+        res => res.data,
+        err => Promise.reject(err.response.data.errors)
+    )
+}
+
+export const deleteRental = (rentalId) =>{
+    return axiosInstance.delete(`rentals/${rentalId}`).then(
+        res => res.data,
+        err => Promise.reject( err.response.data.errors )
+    )
+}
+
+//<==========================================================================>
+//                                IMAGE UPLOAD
+//<==========================================================================>
+
+export const uploadImage = image =>{
+    let formData = new FormData() ;
+    const config = {
+        header : {'content-type':'multipart/form-data'}
+    }
+    formData.append("file", image);
+
+    return axiosInstance.post('/image-upload', formData, config )
+        .then( 
+            res => res.data
+        ).catch(({response}) => Promise.reject(response))
+}
