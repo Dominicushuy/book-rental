@@ -1,14 +1,20 @@
 const Booking = require('./../models/booking');
 const Rental = require('../models/rental');
 const User = require('../models/user');
-
+const Payment = require('../models/payment');
 const moment = require('moment');
 
 const { normalizeErrors } = require('../helpers/mongoose');
 
+require('dotenv').config();
+const stripe = require('stripe')(process.env.STRIPE_SK);
+
+//Contants
+const CUSTOMER_SHARE = 0.8;
+
 exports.createBooking = function( req, res ){
 
-    const { startAt, endAt, totalPrice, guests, days, rental } = req.body;
+    const { startAt, endAt, totalPrice, guests, days, rental, paymentToken } = req.body;
     const user = res.locals.user;
   
     const booking = new Booking({ startAt, endAt, totalPrice, guests, days});
@@ -23,29 +29,35 @@ exports.createBooking = function( req, res ){
               }
               if( isValidBooking(booking , rentalResult) ){ // chưa có người đặt
 
-                booking.user = user;
-                booking.rental = rentalResult;
-                rentalResult.bookings.push( booking );
-                
-                booking.save( (err) => {
-                    if(err) return res.status(422).send({errors: normalizeErrors(err.errors)});
+                const {payment , err } = createPayment( booking , rentalResult.user , paymentToken );
 
-                    rentalResult.save();
+                if(payment){
+                    booking.user = user;
+                    booking.rental = rentalResult;
+                    booking.payment = payment
+                    rentalResult.bookings.push( booking );
+                    
+                    booking.save( (err) => {
+                        if(err) return res.status(422).send({errors: normalizeErrors(err.errors)});
 
-                    //Cập nhật dữ liệu đặt vé vào model User
-                    User.update( 
-                        {_id : user.id},
-                        { $push : { bookings : booking }  },
-                        () =>{}
-                    )
+                        rentalResult.save();
 
-                    //trả dữ liệu cho FE
-                    return res.json({ 
-                        startAt : booking.startAt,
-                        endAt : booking.endAt,
-                    })
+                        //Cập nhật dữ liệu đặt vé vào model User
+                        User.update( 
+                            {_id : user.id},
+                            { $push : { bookings : booking }  },
+                            () =>{}
+                        )
 
-                }) 
+                        //trả dữ liệu cho FE
+                        return res.json({ 
+                            startAt : booking.startAt,
+                            endAt : booking.endAt,
+                        })
+                    }) 
+                }else{
+                    return res.status(422).send({errors: [{title: 'Payment Error!', detail: err}]});
+                }
 
               }else{ // đã có người đặt
                 return res.status(422).send({errors: [{title: 'Invalid Booking!', detail: 'Choosen dates are already taken!'}]});
@@ -89,4 +101,43 @@ function isValidBooking( proposedBooking, rental ){
     }
 
     return isValid;
+}
+
+
+async function createPayment( booking , toUser , token){ //toUser = rentalResult.user là chủ nhà , token = paymentToken req
+    const { user } = booking;
+
+    const customer = await stripe.customers.create({ 
+        source : token.id,
+        email : user.email
+    })
+
+    if(customer){
+        User.update( 
+            {_id : user.id},
+            { $set :  { stripeCustomerId : customer.id } },
+            () =>{}
+        )
+
+        const payment = new Payment({
+            fromUser : user,
+            toUser,
+            fromStripeCustomerId : customer.id,
+            booking,
+            tokenId : token.id,
+            amount : booking.amount * 100 * CUSTOMER_SHARE ,
+        });
+
+        try {
+            const savedPayment = await payment.save();
+            return { payment : savedPayment };
+
+        } catch (err) {
+            return { err : err.message };
+        }
+
+    }else{
+        return {err : "cannot process Payment"}
+    }
+
 }

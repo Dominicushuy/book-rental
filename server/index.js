@@ -35,11 +35,13 @@ const rentalRoutes = require('./routers/rental');
 const userRoutes = require('./routers/users');
 const bookingRoutes = require('./routers/bookings');
 const imageUploadRoutes = require('./routers/image-upload');
+const paymentRoutes = require('./routers/payment');
 
 app.use('/api/v1/rentals', rentalRoutes);
 app.use('/api/v1/users', userRoutes);
 app.use('/api/v1/bookings', bookingRoutes);
 app.use('/api/v1/', imageUploadRoutes);
+app.use('/api/v1/payment', paymentRoutes);
 
 const PORT = process.env.PORT || 3001;
 

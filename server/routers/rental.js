@@ -11,6 +11,26 @@ router.get('/secret', UserCtrl.authMiddleware, function(req, res) {
     res.json({"secret": true});
 });
 
+
+router.get('/:id/verify-user', UserCtrl.authMiddleware, function(req, res){
+  const user = res.locals.user;
+
+  Rental
+    .findById(req.params.id)
+    .populate('user')
+    .exec( (err, rentalResult) => {
+      if (err) {
+        return res.status(422).send({errors: normalizeErrors(err.errors)});
+      }
+
+      if (rentalResult.user.id !== user.id) {
+        return res.status(422).send({errors: [{title: 'Invalid User!', detail: 'You are not rental owner!'}]});
+      }
+
+      return res.json({status: 'verified'});
+    });
+})
+
 router.get('/manage', UserCtrl.authMiddleware , function(req, res){
   const user = res.locals.user;
 

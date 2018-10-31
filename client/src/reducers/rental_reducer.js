@@ -20,6 +20,14 @@ export const selectedRentalReducer = (state=INITIAL_STATE.rental, action) =>{
         case type.FETCH_RENTALS_BY_ID_SUCCESS:
             return Object.assign({}, state, { data: action.rental});
         
+        case type.UPDATE_RENTAL_SUCCESS:
+            return {...state, data: action.rental}
+
+        case type.UPDATE_RENTAL_FAIL:
+            return { ...state, errors: action.errors }
+
+        case type.RESET_RENTAL_ERRORS:
+            return { ...state, errors:[] }
 
         default:
             return state;

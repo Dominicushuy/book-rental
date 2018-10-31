@@ -14,15 +14,20 @@ import { EditableSelect } from '../../shared/editable/EditableSelect';
 import { connect } from 'react-redux';
 import * as actions from './../../../actions';
 
+import swal from 'sweetalert2';
+
 //Editable props{ data, type of Field,  }
 
 class RentalUpdate extends Component {
     constructor(){
         super()
         this.state = {
-            isAllowed : true,
-            isFetching: false
+            isAllowed : false,
+            isFetching: true
         }
+
+        this.updateRental = this.updateRental.bind(this);
+        this.resetRentalErrors = this.resetRentalErrors.bind(this);
     }
 
     componentWillMount(){
@@ -31,8 +36,35 @@ class RentalUpdate extends Component {
         this.props.dispatch( actions.fetchRentalById(id) );
     }
 
+    componentDidMount(){
+        const id = this.props.match.params.id;
+
+        this.setState({ isFetching : true })
+
+        actions.verifyRentalOwner(id).then(
+            () => {
+                this.setState( { isAllowed : true, isFetching:false } )
+            },
+            () => {
+                this.setState( {isAllowed : false, isFetching : true} )
+            }
+        )
+    }
+
     updateRental(data){
-        console.log(data)
+        const { rental: {_id} , dispatch } = this.props;
+
+        dispatch( actions.updateRental(_id ,data ) )
+    }
+
+    resetRentalErrors(){
+        const { errors } = this.props;
+        swal({
+            type: 'error',
+            title: 'Errors..',
+            text: `${errors[0].detail}`,
+        })
+        this.props.dispatch( actions.resetRentalErrors() )
     }
 
     render() {

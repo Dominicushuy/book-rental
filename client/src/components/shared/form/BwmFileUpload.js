@@ -89,7 +89,7 @@ class BwmFileUpload extends Component {
             crop : makeAspectCrop({
                 x: 0,
                 y: 0,
-                aspect: 4 / 3,
+                aspect: 6 / 5,
                 width: 50,
             },image.width / image.height )
         })

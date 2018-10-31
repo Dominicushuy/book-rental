@@ -53,7 +53,32 @@ function withGeocode(WrappedComponent){
     }
     
     componentWillMount(){
-      this.getGeocodedLocation()
+      this.getGeocodedLocation();
+    }
+
+    componentDidUpdate() {
+      if (this.props.isReloading === true) {
+        this.getGeocodedLocation();
+      }
+    }
+
+
+    getGeocodedLocation(){
+      const location = this.props.location;
+
+      //if location is cached return cached values
+      if( this.cacher.isValueCached(location) ){ //is existing => not load again
+        this.updateCoordinates(this.cacher.getCachValue(location));
+      }else{
+        this.geocodeLocation(location).then(
+          (coordinates) =>{
+            this.updateCoordinates(coordinates);
+          },
+          (err) =>{
+            this.props.mapLoaded();
+            this.setState({ isError:true, isLocationLoaded: true })
+          });
+      }
     }
 
     //location ==> coordinates
@@ -75,21 +100,14 @@ function withGeocode(WrappedComponent){
       });
     }
 
-    getGeocodedLocation(){
-      const location = this.props.location;
+    updateCoordinates(coordinates){
+      this.props.mapLoaded();
 
-      //if location is cached return cached values
-      if( this.cacher.isValueCached(location) ){
-        this.setState({ coordinates: this.cacher.getCachValue(location), isLocationLoaded: true });
-      }else{
-        this.geocodeLocation(location).then(
-          (coordinates) =>{
-            this.setState({ coordinates })
-          },(err) =>{
-            this.setState({ isError:true, isLocationLoaded: true })
-          });
-      }
-      
+      this.setState({
+        coordinates,
+        isLocationLoaded : true
+      })
+
     }
 
     render(){

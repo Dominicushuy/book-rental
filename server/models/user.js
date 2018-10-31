@@ -23,8 +23,11 @@ const userSchema = new mongoose.Schema({
         max: [32, 'Too long, max is 32 characters'],
         required: 'Password is required'
     },
+    stripeCustomerId : String,
+    revenue : Number,
     rentals: [{type: Schema.Types.ObjectId, ref: 'Rental'}],
     bookings: [{ type: Schema.Types.ObjectId, ref: 'Booking' }]
+
 });
 
 userSchema.methods.hasSamePassword = function(requestedPassword){

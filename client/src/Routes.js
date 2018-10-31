@@ -17,9 +17,29 @@ import RentalManage from './components/rental/rental_manage/RentalManage';
 import Login from './components/login-register/Login';
 import Register from './components/login-register/Register';
 
+import Payment from './components/shared/payment/StripePayment';
+
 import { ProtectedRoute } from './components/shared/auth/ProtectedRoute';
+import {StripeProvider} from 'react-stripe-elements';
 
 class App extends Component {
+  constructor(){
+    super()
+    this.state = {
+      stripe: null
+    }
+  }
+
+  componentDidMount() {
+    if (window.Stripe) {
+      this.setState({stripe: window.Stripe('pk_test_10CatPBLd02tbHYY1PByTOX4')});
+    } else {
+      document.querySelector('#stripe-js').addEventListener('load', () => {
+    
+        this.setState({stripe: window.Stripe('pk_test_10CatPBLd02tbHYY1PByTOX4')});
+      });
+    }
+  }
 
   render() {
     return (
@@ -39,6 +59,11 @@ class App extends Component {
               <Route exact path="/rentals/:id/edit" component={RentalUpdate} />                 
               <Route exact path="/login" component={Login} />
               <Route exact path="/register" component={Register} />
+
+              <StripeProvider stripe={this.state.stripe}>  
+                <Route exact path="/payment" component={Payment} />
+              </StripeProvider>
+
             </Switch>
           </div>
       </div>

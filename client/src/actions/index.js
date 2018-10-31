@@ -84,6 +84,60 @@ export const createRental = (rentalData) =>{
     )
 }
 
+export const verifyRentalOwner = (id) =>{
+    return axiosInstance.get(`/rentals/${id}/verify-user`)
+}
+
+
+//Edit Rental
+export const updateRental = (id , rentalData ) => dispatch =>{
+    return axiosInstance.patch(`rentals/${id}`, rentalData)
+                        .then( res => res.data )
+                        .then( rentalUpdated => {
+                            dispatch(updateRentalSuccess(rentalUpdated))
+                            
+                            if(rentalData.city || rentalData.street ){
+                                dispatch(reloadMap())
+                            }
+                        })
+                        .catch( ({response}) => dispatch( updateRentalFail(response.data.errors) ) )
+}
+
+const updateRentalSuccess = (rental) =>{
+    return {
+        type : type.UPDATE_RENTAL_SUCCESS,
+        rental
+    }
+}
+const updateRentalFail = (errors) =>{
+    return {
+        type : type.UPDATE_RENTAL_FAIL,
+        errors
+    }
+}
+
+export const resetRentalErrors = () =>{
+    return {
+        type : type.RESET_RENTAL_ERRORS
+    }
+}
+
+//<==========================================================================>
+//                                MAP ACTION
+//<==========================================================================>
+
+export const reloadMap = () =>{
+    return {
+        type: type.RELOAD_MAP
+    }
+}
+
+export const reloadMapFinish = () =>{
+    return {
+        type : type.RELOAD_MAP_FINISH
+    }
+}
+
 //<==========================================================================>
 //                                AUTH ACTION
 //<==========================================================================>
@@ -141,7 +195,6 @@ export const checkAuthState = () =>{
         }
     }
 }
-
 
 
 //<==========================================================================>

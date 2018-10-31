@@ -166,15 +166,15 @@ class Booking extends Component {
                                         isInvalidDate={this.checkInvalidDates}
                                         opens='left'
                                         containerStyles={{display: 'block'}}>
-                        <input
-                            onChange={ this.onChange }  
-                            name="dayPicker"
-                            value={this.state.dayPicker}
-                            id='dates' 
-                            type='text' 
-                            className='form-control'
-                        >
-                        </input>
+                            <input
+                                onChange={ this.onChange }  
+                                name="dayPicker"
+                                value={this.state.dayPicker}
+                                id='dates' 
+                                type='text' 
+                                className='form-control'
+                            >
+                            </input>
                         </DateRangePicker>
                         </div>
                         <div className='form-group'>

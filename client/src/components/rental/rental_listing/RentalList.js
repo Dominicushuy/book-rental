@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import RentalCart from './RentalCart';
+import RentalCard from './RentalCart';
 
 import { connect } from 'react-redux';
 import * as actions from './../../../actions';
@@ -22,7 +22,7 @@ class RentalList extends Component {
     renderRentals = () =>(
         this.props.rentals.data ?
             this.props.rentals.data.map( (rental , i) =>(
-                <RentalCart key={i}
+                <RentalCard key={i}
                             rental = {rental}
                 />
             ))
