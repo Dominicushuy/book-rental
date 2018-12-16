@@ -19,18 +19,25 @@ import ReduxThunk from 'redux-thunk';
 
 import Reducer from './reducers';
 
+import {StripeProvider} from 'react-stripe-elements';
+
+
 
 const createStoreWithMiddleware = applyMiddleware(ReduxThunk,promiseMiddleware)(createStore)
 
 ReactDOM.render(
+    <StripeProvider apiKey="pk_test_10CatPBLd02tbHYY1PByTOX4">
     
-    <Provider store={createStoreWithMiddleware(Reducer,
-        window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
-    )} >
-        <BrowserRouter>
-            <Routes />
-        </BrowserRouter>
-    </Provider>
+        <Provider store={createStoreWithMiddleware(Reducer,
+            window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+        )} >
+            
+            <BrowserRouter>
+                <Routes />
+            </BrowserRouter>
+            
+        </Provider>
+    </StripeProvider>
 
     
 , document.getElementById('root'));

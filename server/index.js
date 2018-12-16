@@ -23,10 +23,24 @@ const config = require('./config/dev');
 
 const FakeDB = require('./fake_db');
 
-mongoose.connect(config.DB_URL, { useCreateIndex: true , useNewUrlParser: true } ).then( () =>{
-    const fakeDB = new FakeDB();
-    // fakeDB.seeDB();
+mongoose.connect("http:mongodb://localhost:27017/Book-rental", { useCreateIndex: true , useNewUrlParser: true } ).then( () =>{
+  // const fakeDB = new FakeDB();
+  // fakeDB.seeDB();
 })
+
+app.use((req, res, next) => {
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader(
+      "Access-Control-Allow-Headers",
+      "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+    );
+    res.setHeader(
+      "Access-Control-Allow-Methods",
+      "GET, POST, PATCH, PUT, DELETE, OPTIONS"
+    );
+    next();
+  });
+  
 
 //<============================================================================>
 //                                    ROUTES
@@ -41,7 +55,7 @@ app.use('/api/v1/rentals', rentalRoutes);
 app.use('/api/v1/users', userRoutes);
 app.use('/api/v1/bookings', bookingRoutes);
 app.use('/api/v1/', imageUploadRoutes);
-app.use('/api/v1/payment', paymentRoutes);
+app.use('/api/v1/payments', paymentRoutes);
 
 const PORT = process.env.PORT || 3001;
 

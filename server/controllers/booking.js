@@ -7,7 +7,7 @@ const moment = require('moment');
 const { normalizeErrors } = require('../helpers/mongoose');
 
 require('dotenv').config();
-const stripe = require('stripe')(process.env.STRIPE_SK);
+const stripe = require('stripe')("sk_test_0mUi423cAIwYtW8ywtUoCLDM");
 
 //Contants
 const CUSTOMER_SHARE = 0.8;
@@ -22,20 +22,23 @@ exports.createBooking = function( req, res ){
     Rental.findById(rental._id)
           .populate('bookings')
           .populate('user')
-          .exec( ( err , rentalResult) => {
+          .exec( async ( err , rentalResult) => {
               if(err) return res.status(422).send({errors: normalizeErrors(err.errors)}); //Lỗi database
               if( rentalResult.user.id === user.id ) {  //đã book rồi
                 return  res.status(422).send({errors: [{title: 'Invalid User!', detail: 'Cannot create booking on your Rental!'}]});
               }
               if( isValidBooking(booking , rentalResult) ){ // chưa có người đặt
 
-                const {payment , err } = createPayment( booking , rentalResult.user , paymentToken );
+                booking.user = user;
+                booking.rental = rentalResult;
+                rentalResult.bookings.push( booking );
+
+                const {payment , err } = await createPayment( booking , rentalResult.user , paymentToken );
 
                 if(payment){
-                    booking.user = user;
-                    booking.rental = rentalResult;
+                    
                     booking.payment = payment
-                    rentalResult.bookings.push( booking );
+                    
                     
                     booking.save( (err) => {
                         if(err) return res.status(422).send({errors: normalizeErrors(err.errors)});
@@ -106,9 +109,10 @@ function isValidBooking( proposedBooking, rental ){
 
 async function createPayment( booking , toUser , token){ //toUser = rentalResult.user là chủ nhà , token = paymentToken req
     const { user } = booking;
+    const tokenId = token.id || token;
 
     const customer = await stripe.customers.create({ 
-        source : token.id,
+        source : tokenId,
         email : user.email
     })
 
@@ -125,7 +129,7 @@ async function createPayment( booking , toUser , token){ //toUser = rentalResult
             fromStripeCustomerId : customer.id,
             booking,
             tokenId : token.id,
-            amount : booking.amount * 100 * CUSTOMER_SHARE ,
+            amount : booking.totalPrice * 100 * CUSTOMER_SHARE ,
         });
 
         try {

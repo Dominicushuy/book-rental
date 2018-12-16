@@ -20,7 +20,7 @@ class AxiosService {
                 const token = authService.getToken();
 
                 if(token){
-                    config.headers.Authorization = `Dominicushuy ${token}`;
+                    config.headers.Authorization = `Bearer ${token}`;
                 }
                 
                 return config;

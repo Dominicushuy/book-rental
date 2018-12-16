@@ -8,9 +8,9 @@ const UserCtrl = require('../controllers/user');
 require('dotenv').config();
 
 cloudinary.config({
-    cloud_name: process.env.CLOUD_NAME,
-    api_key : process.env.CLOUD_API_KEY,
-    api_secret: process.env.CLOUD_API_SECRET
+    cloud_name: "huy-dev",
+    api_key : "471991285564824",
+    api_secret: "9n66PqK_BvrDayWg2qIV4-hRQY8"
 })
 
 router.post( '/image-upload', UserCtrl.authMiddleware, formidable() ,(req, res) => {

@@ -7,11 +7,13 @@ import swal from 'sweetalert2';
 
 import { getRangeOfDates } from './../../helpers';
 import BookingModal from './BookingModal';
+import Payment from './../payment/Payment';
 
 import { connect } from 'react-redux';
 import * as actions from './../../actions';
 
 import { Link } from 'react-router-dom';
+
 
 class Booking extends Component {
     constructor() {
@@ -24,7 +26,8 @@ class Booking extends Component {
             proposedBooking: {
                 startAt: '',
                 endAt: '',
-                guests: ''
+                guests: '',
+                paymentToken:""
             },
             modal: {
                 open: false
@@ -143,11 +146,16 @@ class Booking extends Component {
         })
     }
 
+    setPaymentToken = (paymentToken) =>{
+        const { proposedBooking } = this.state;
+        proposedBooking.paymentToken = paymentToken;
+        this.setState({ proposedBooking})
+    }
+
     render() {
         const { rental } = this.props;
-        const { startAt, endAt, guests } = this.state.proposedBooking;
+        const { startAt, endAt, guests , paymentToken } = this.state.proposedBooking;
         const isAuth = localStorage.getItem('auth_token');
-
         return (
             <div className='booking'>
                 {/* <ToastContainer /> */}
@@ -209,6 +217,8 @@ class Booking extends Component {
                     rentalPrice = { rental.dailyRate }
                     closeModal={this.cancelConfirmation}
                     confirmModal={this.reserveRental}
+                    disabled={!paymentToken}
+                    acceptPayment={ () => <Payment setPaymentToken={this.setPaymentToken} /> }
                 />
             </div>
         );

@@ -279,3 +279,19 @@ export const uploadImage = image =>{
             res => res.data
         ).catch(({response}) => Promise.reject(response))
 }
+
+export const getPendingPayments = () =>{
+    return axiosInstance.get('/payments')
+                        .then( res => res.data )
+                        .catch( ({response}) =>Promise.reject(response.data.errors) )
+}
+
+export const acceptPayment = (payment) =>{
+    return axiosInstance.post('/payments/accept',payment)
+                        .then( res => res.data )
+                        .catch( ({response}) => Promise.reject(response.data.errors) )
+}
+
+export const declinePayment = (payment) =>{
+    return {}
+}
