@@ -1,7 +1,7 @@
 {
   "name": "client",
   "version": "0.1.0",
-  "private": true,
+  "private": false,
   "dependencies": {
     "@material-ui/core": "^3.2.0",
     "axios": "^0.18.0",
@@ -44,6 +44,7 @@
     "eject": "react-scripts eject"
   },
   "proxy": "http://localhost:3001",
+  "license": "ISC",
   "eslintConfig": {
     "extends": "react-app"
   },
