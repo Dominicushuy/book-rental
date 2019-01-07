@@ -24,8 +24,8 @@ const config = require('./config/dev');
 const FakeDB = require('./fake_db');
 
 mongoose.connect("mongodb://dominicushuy:huyvt123@ds231133.mlab.com:31133/book-rental", { useCreateIndex: true , useNewUrlParser: true } ).then( () =>{
-  const fakeDB = new FakeDB();
-  fakeDB.seeDB();
+  // const fakeDB = new FakeDB();
+  // fakeDB.seeDB();
 })
 
 app.use((req, res, next) => {
